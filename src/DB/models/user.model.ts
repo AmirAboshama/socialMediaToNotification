@@ -22,6 +22,7 @@ export interface IUser {
     profilePicture?: string;
     coverPicture?: string;
     role: number | roleEnum;
+    friends?: Types.ObjectId[];
     changeCredential?: Date
 }
 
@@ -39,6 +40,7 @@ const userSchema = new Schema<IUser>({
     phone: { type: String, required: false },
     gender: { type: Number, enum: genderEnum, default: genderEnum.male },
     role: { type: Number, enum: roleEnum, default: roleEnum.User },
+    friends: [{ type: Types.ObjectId, ref: "User" }],
     changeCredential: Date,
     profilePicture: { type: String },
 

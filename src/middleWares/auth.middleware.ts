@@ -1,10 +1,7 @@
 import type { Request, Response, NextFunction } from "express";import { TokenTypeEnum } from "../common/enums/tokenEnum.js";
 import { unauthorizedError } from "../common/exeption/domain.exeption.js";
-import tokenService from "../common/security/token.service.js";
-import type { Jwt, JwtPayload } from "jsonwebtoken";
-import type { roleEnum } from "../common/enums/userEnum.js";
+import TokenService from "../common/security/token.service.js";
 import RedisServices from "../DB/redis/redis.services.js";
-import userRebo from "../DB/Repo/user.Rebo.js";
 
 export function authMiddleware(tokenTypeParam = TokenTypeEnum.access) {
   const redisServices = new RedisServices();
@@ -31,63 +28,17 @@ export function authMiddleware(tokenTypeParam = TokenTypeEnum.access) {
         throw new unauthorizedError("token not define ")
 
       }
-      const decodedToken = tokenService.decodeToken(token) as JwtPayload
-      if (!decodedToken||!decodedToken.aud){
-        throw new unauthorizedError("invalid token bayload")
-
-      }
-      const [userRole, tokenType] = decodedToken.aud;
-
-      if (tokenType !== tokenTypeParam) {
-        throw new unauthorizedError("Invalid token type")
-
-      }
-
-      const { accessSigniture, refreshsigniture } =tokenService. getSignature(Number (userRole)  as roleEnum);
-
-      const verifiedToken =tokenService.vertifyToken({
-        token,
-        Signiture: tokenTypeParam === TokenTypeEnum.access ? accessSigniture : refreshsigniture
-      }) as JwtPayload;
-
-      // Check if token is blacklisted
-      const isBlackListed = verifiedToken.jti &&
-        (await redisServices.exists(
-          redisServices.getBlackListTokenKey({
-            userId: verifiedToken.sub as string,
-            tokenId: verifiedToken.jti
-          })
-        ));
-
-      if (isBlackListed) {
-throw new unauthorizedError("Session expired, please login again");
-      }
-
-      // Find user in DB
-      const user = await userRebo.findById({
-  id: verifiedToken.sub as string,
-   
-
-      });
-
-      if (!user) {
-                throw new unauthorizedError("User not found")
-
-      }
-
-      // Check if token issued before user's last credential change
-      if (new Date(verifiedToken.iat! * 1000) < user.changeCredential!) {
-                throw new unauthorizedError("Token expired due to credentials change")
-
-      }
-
-      console.log("User:", user);
-
+  
+     const{user,verifiedToken}= await TokenService.checkTocken(token)
+      
       req.user = user;
       req.tokenPayload = verifiedToken;
+      console.log("USER =", user);
+
       next();
     }catch (err) {
   console.error(err);
+  
   next(err); // 👈 أهم سطر
 }
   };

@@ -67,6 +67,34 @@ export default class RedisServices {
 getFcmKey(userId: string) {
    return `otp::${userId}::FCMToken`;
 }
+getSocketKey(userId: string) {
+   return `socketIdUserIdS::${userId}::socketIdUserIdS`;
+}
+
+
+async addSocketToIdSet(
+  userId: string,
+  socketId: string
+) {
+  return await client.sAdd(
+    this.getSocketKey(userId),socketId
+  );
+}
+async removeSocketToIdSet(
+  userId: string,
+  socketId: string
+) {
+  return await client.sRem(
+    this.getSocketKey(userId),socketId
+  );
+}
+async getMemberSocketToIdSet(
+  userId: string ,
+) {
+  return await client.sMembers(
+    this.getSocketKey(userId),
+  );
+}
 
 async addFcmToSet(
   userId: string,
@@ -83,4 +111,6 @@ async getFcmSetMembers(userId: string) {
     this.getFcmKey(userId)
   );
 }
+
+
 }

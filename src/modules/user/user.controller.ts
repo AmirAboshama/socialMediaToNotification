@@ -1,22 +1,27 @@
 import express from "express";
 import UserService from "./user.service.js";
 import succResponse from "../../common/response/succ.response.js";
-import z from "zod";
-import { badRequestError } from "../../common/exeption/domain.exeption.js";
 import { validation } from "../../middleWares/validationMiddleware.js";
 import { authMiddleware } from "../../middleWares/auth.middleware.js";
 import type { IUser } from "../../DB/models/user.model.js";
 import { logoutSchema, uploadProfileImageSchema } from "./user.validation.js";
 import cloudFileUpload from "../../common/multer/multer.config.js";
 import { storageApproachesEnum } from "../../common/enums/multerEnum.js";
+import chatController from "../chat/chat.controller.js";
 
 const userController = express.Router()
+userController.use("/:userId/chat", chatController);
 
 
 userController.get("/", authMiddleware(), (req, res) => {
-  return succResponse({ res, msg: "auth page", data: req.user })
-})
-
+  return succResponse({
+    res,
+    msg: "auth page",
+    data: {
+      user: req.user
+    }
+  });
+});
 userController.post("/upload-Profile-Picture", authMiddleware(), cloudFileUpload({ storageApproach: storageApproachesEnum.Memory, fileSize: 5 * 1024 * 1024 }).single("profilePicture"), validation(uploadProfileImageSchema) , async (req, res) => {
   // if (req.user.profilePicture) {
   //   await UserService.deleteUser(req.user.profilePicture as any);

@@ -4,10 +4,8 @@ import { REGION, APPLICATION_NAME, BUCKET_NAME, ACCESS_KEY_ID, SECRET_ACCESS_KEY
 import { Upload } from "@aws-sdk/lib-storage";
 import { storageApproachesEnum } from "../enums/multerEnum.js";
 import { createReadStream } from "fs";
-import e from "express";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
-import { ListObjectsV2Command } from "@aws-sdk/client-s3";
 
 class S3BucketService {
     private _client = new S3Client({

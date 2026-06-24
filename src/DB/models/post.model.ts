@@ -42,7 +42,15 @@ const postSCEMA = new Schema<Ipost>(
 
 
     },{
-    timestamps:true
+    timestamps:true,
+
+
+
+    toObject: {virtuals: true},
+    toJSON: {virtuals: true}
+
+     
+
     }
 )
 
@@ -59,6 +67,16 @@ postSCEMA.pre(['findOne','find'], function () {
    
 })
 
+
+
+postSCEMA.virtual ("comments",
+  {
+    ref: "Comment",
+    localField: "_id",
+    foreignField: "postId",
+    justOne: true
+  }
+)
 // 3. Create a Model.
 const postModel = model<Ipost>('Post', postSCEMA);
 

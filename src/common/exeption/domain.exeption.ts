@@ -1,5 +1,17 @@
 
+import { GraphQLError } from "graphql";
 import customError from "./custom.error.js"
+
+  export function MapGQLError(err:customError){
+      throw new GraphQLError(err.message||"u dont have acces  ",{
+        extensions :{
+         statusCode: err.statusCode||401,
+         cause:err.cause,
+         stack:err.stack
+        } }
+
+    )
+  }
 
 
 

@@ -35,8 +35,7 @@ class AuthService {
 
 
 
-    const [user] = await this._userRepo.create({ data: [bodyData] });
-
+const user = await this._userRepo.create({ data: bodyData });
 
     return user!;
 
@@ -272,7 +271,7 @@ if(!payload.email_verified){
       return {status:200,result:await this.loginWithGmail(idToken)};
    }
 
-   const [newUser] = await this._userRepo.create({
+   const newUser = await this._userRepo.create({
       data:{
          email: payloadGoogleToken.email,
          userName: payloadGoogleToken.name,

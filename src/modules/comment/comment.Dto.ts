@@ -1,5 +1,5 @@
 import type z from "zod";
-import type { createPostSchema, findPostsSchema, updatePostSchema } from "./posts.validation.js";
+import type { createPostSchema, findPostsSchema, updatePostSchema } from "./comment.validation.js";
 
 
 
